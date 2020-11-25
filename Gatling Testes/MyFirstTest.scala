@@ -9,13 +9,8 @@ class MyFirstTest extends Simulation {
     val httpProtocol = http.baseUrl("https://reqres.in")
 
     val header = Map(
-        "accept" -> "*/*",
-        "accept-encoding" -> "gzip, deflate, br",
         "accept-language" -> "en-US,en;q=0.9,pt;q=0.8",
-        "cache-control" -> "no-cache",
-        "content-type" -> "application/json",
-        "pragma" -> "no-cache",
-        "referer" -> "https://reqres.in/"
+        "content-type" -> "application/json"
     )
 
     val scn = scenario("MyFirstTest")
