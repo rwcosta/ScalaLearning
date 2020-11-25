@@ -6,9 +6,7 @@ import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
 
 class MyFirstTest extends Simulation {
-    val httpProtocol = http
-        .baseUrl("https://reqres.in")
-        //.inferHtlmResources(BlackList(""".*\.js""", """.*\.gif""", """.*\.jpeg""", """.*\.jpg""", """.*\.css"""))
+    val httpProtocol = http.baseUrl("https://reqres.in")
 
     val header = Map(
         "accept" -> "*/*",
@@ -31,10 +29,10 @@ class MyFirstTest extends Simulation {
             .headers(header))
         .pause(2)
 
-        /*.exec(http("POST_USER_01")
+        .exec(http("POST_USER_01")
             .post("/api/users")
-            .body(RawFileBody("""{"name":"morpheus","job":"leader"}"""))
-            .check(status.is(201)))*/
+            .body(StringBody("""{ "name": "morpheus", "job": "leader" }""")).asJson
+            .check(status.is(201)))
 
         .exec(http("GET_DELAYED_RESPONSE")
             .get("/api/users?page=2")
