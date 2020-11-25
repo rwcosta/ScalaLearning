@@ -1,4 +1,4 @@
-package computerdatabase
+package reqres
 
 import scala.concurrent.duration._
 import io.gatling.core.Predef._
@@ -28,6 +28,7 @@ class MyFirstTest extends Simulation {
             .post("/api/users")
             .body(StringBody("""{ "name": "morpheus", "job": "leader" }""")).asJson
             .check(status.is(201)))
+        .pause(5)
 
         .exec(http("GET_DELAYED_RESPONSE")
             .get("/api/users?page=2")
