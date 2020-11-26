@@ -20,7 +20,7 @@ A classe de teste precisa estender a classe Simulation que é estruturada em 4 p
 
 O Gatling HTTP faz com que seja possível utilizar o protocolo HTTP para realizar os testes que podem ser aplicados em APIs, sites e web services. Utilizando http.baseUrl setamos o httpProtocol para o nosso scenario. Vale ressaltar que também é possível realizar o teste em vários alvos ao mesmo tempo utilizando o http.baseUrls().
 
-No nosso caso, o teste foi aplicado na API **Reqres**:
+No nosso caso, o teste foi aplicado na API [Reqres](https://reqres.in/):
 
 ```Scala
 val httpProtocol = http.baseUrl("https://reqres.in")
