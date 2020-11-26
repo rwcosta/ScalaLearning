@@ -4,11 +4,13 @@
 
 No Gatling, para se utilizar da DSL é necessário fazer alguns imports:
 
-**scala.concurrent.duration._**: serve para especificar a grandeza na duração de tempo
+```Scala
+scala.concurrent.duration._ /* para especificar a grandeza na duração de tempo */
 
-**io.gatling.core.Predef_**: core para a DSL
-**io.gatling.http.Predef_**: protocolo http 
-**io.gatling.jdbc.Predef_**: caso utilize feeder
+io.gatling.core.Predef_ /* core para a DSL */
+io.gatling.http.Predef_ /* protocolo http */
+io.gatling.jdbc.Predef_ /* caso utilize feeder */
+```
 
 ## **Estrutura**
 
