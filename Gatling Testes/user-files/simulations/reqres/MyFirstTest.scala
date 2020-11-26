@@ -50,5 +50,9 @@ class MyFirstTest extends Simulation {
                 nothingFor(5 seconds),
                 rampUsersPerSec(10) to 15 during(5 seconds)
             ))
+            .assertions(
+                forAll.responseTime.max.lte(150),
+                global.successfulRequests.percent.gte(95)
+            )
             .protocols(httpProtocol)
 }

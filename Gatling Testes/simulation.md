@@ -252,7 +252,69 @@ setUp(scn).assertions(global.responseTime.max.lt(50))
 setUp(scn).assertions(forAll.failedRequests.percent.lte(5))
 
 /* Afirma se todo request têm pelo menos 95% de sucessos */
-setUp(scn).assertions(forAll.sucessfulRequests.percent.gte(95))
+setUp(scn).assertions(forAll.successfulRequests.percent.gte(95))
+```
+Setamos um assertion simples, combinando com o nosso inject:
+
+```Scala
+setUp(scn
+    .inject(
+        atOnceUsers(10),
+        nothingFor(3 seconds),
+        heavisideUsers(50) during(10 seconds),
+        nothingFor(5 seconds),
+        constantUsersPerSec(10) during(5 seconds),
+        nothingFor(5 seconds),
+        rampUsersPerSec(10) to 15 during(5 seconds)
+    ))
+    .assertions(
+        forAll.responseTime.max.lte(150),
+        global.successfulRequests.percent.gte(95)
+    )
+    .protocols(httpProtocol)
+```
+
+#### **Resultados**
+
+Quando uma simulação utiliza assertions, os resultados do assertion são escritos em um arquivo JSON e em outro JUnit. Caso utilizado o bundle do gatling, os arquivos de report estarão dentro da pasta `results/YorSimulationResult/js`.
+
+Ex:
+```javascript
+/* Exemplo tirado do arquivo assertions.json do MyFirsTest */
+
+/* ... */
+
+"assertions": [
+{
+  "path": "GET_USERS_01",
+  "target": "max of response time",
+  "condition": "is less than or equal to",
+  "expectedValues": [150.0],
+  "result": false,
+  "message": "GET_USERS_01: max of response time is less than or equal to 150.0",
+  "actualValue": [247.0]
+},
+{
+  "path": "GET_DELAYED_RESPONSE",
+  "target": "max of response time",
+  "condition": "is less than or equal to",
+  "expectedValues": [150.0],
+  "result": true,
+  "message": "GET_DELAYED_RESPONSE: max of response time is less than or equal to 150.0",
+  "actualValue": [83.0]
+},
+{
+  "path": "Global",
+  "target": "percentage of successful events",
+  "condition": "is greater than or equal to",
+  "expectedValues": [95.0],
+  "result": true,
+  "message": "Global: percentage of successful events is greater than or equal to 95.0",
+  "actualValue": [98.95348837209302]
+}
+  ]
+
+/* ... */
 ```
 
 Para mais funcionalidades e exempos, acessar [documentação](https://gatling.io/docs/current/general/assertions/).
