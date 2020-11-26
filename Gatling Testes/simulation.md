@@ -16,7 +16,7 @@ import io.gatling.jdbc.Predef_ /* caso utilize feeder */
 
 A classe de teste precisa estender a classe Simulation que é estruturada em 4 partes:
 
-### **HTTP Protocol:**
+### **HTTP Protocol**
 
 O Gatling HTTP faz com que seja possível utilizar o protocolo HTTP para realizar os testes que podem ser aplicados em APIs, sites e web services. Utilizando `http.baseUrl()` setamos o **httpProtocol** para o nosso scenario. Vale ressaltar que também é possível realizar o teste em vários alvos ao mesmo tempo utilizando o `http.baseUrls()`.
 
@@ -28,7 +28,7 @@ val httpProtocol = http.baseUrl("https://reqres.in")
 
 O protocolo também nos permite várias outras configurações desde whitelists, blacklists e headers.
 
-### **Headers:**
+### **Headers**
 
 Pode-se definir um header específico para cada request. Os headers em gatling suportam as configurações dos headers no protocolo HTTP, como o accept-language, referer, Do Not Track, content-type, etc.
 
@@ -40,7 +40,7 @@ val header = Map(
 )
 ```
 
-### **Scenario:**
+### **Scenario**
 
 Aqui é onde vai ser definido um cenário de teste que contém os requests que são enviados através do método `.exec(http(requestName: String).request)` e que geralmente é seguido por um `.pause()` que pode simular o tempo que um usuário levaria para realizar outro request ou também pode ser utilizado para organização e legibilidade do teste. Definimos um scenario **MyFirstTest**:
 
@@ -50,7 +50,7 @@ val scn = scenario("MyFirstTest")
 
 No exec está contido o nome do request e o próprio request que, por sua vez, contém o método e a URL. O próprio gatling provém os métodos mais comuns como os utilizados em REST: get, put, post, delete, patch.
 
-#### **Get:**
+#### **Get**
 
 ```Scala
 .exec(http("GET_USERS_01")
@@ -58,7 +58,7 @@ No exec está contido o nome do request e o próprio request que, por sua vez, c
     .headers(header))
 .pause(2)
 ```
-#### **Post:**
+#### **Post**
 
 O gatling também dá suporte à passagem de parâmetros para os métodos que necessitam de um, como o post. Uma forma de fazer isso é usando o `.formParam(“key”, “value”)`:
 
@@ -81,7 +81,7 @@ Também é possível adicionar um corpo ao request utilizando o `.body()` e assi
 
 Utilizando o **StringBody** passa-se uma string por parâmetro mas também é possível passar diretamente um arquivo utilizando o **RawFileBody**, no caso do JSON `.body(RawFileBody(“object.json”)).asJson`. No caso do bundle baixado no gatling.io, o arquivo .json precisa estar dentro da pasta `user-files/resources`.
 
-#### **Put:**
+#### **Put**
 
 ```Scala
 .exec(http("PUT_USER_01")
@@ -126,6 +126,136 @@ setUp(scn
     ))
     .protocols(httpProtocol)
 ```
+
+## **Checks e Assertions**
+
+### **Checks**
+
+Check geralmente é utilizado para verificar se a resposta de um request é a esperada. É dividida em uma sequência de passos.
+
+#### **Type**
+
+* **HTTP status:** `status` aplica o check no código de resposta HTTP que o request resultou.
+  
+* **Page location:** `currentLocation` e `currentLocationRegex()`, o primeiro aplica o check na URL da página atual, o segundo faz o mesmo mas pesquisa a ocorrência de um padrão que é passado por parâmetro.
+
+* **HTTP header:** `header()` e `headerRegex()`, o primeiro aplica o check no header passado por parâmetro, o segundo faz o mesmo mas pesquisa a ocorrência de um padrão que é passado por parâmetro juntamente com o nome do header.
+
+* **HTTP response body:** Utilizando métodos que o próprio gatling fornece como `bodyString`, `bodyBytes` e `bodyStream`, é possível aplicar alguns checks no corpo de resposta HTTP que o request resultou.
+
+#### **Extracting**
+
+Usado para extrair ocorrências dos targets que foram setados no passo de definição de tipo do check. Alguns métodos do extracting:
+
+* **`find`**: retorna a primeira ocorrência.
+* **`findAll`**: retorna todas as ocorrências em uma lista.
+* **`findRandom`**: retorna uma ocorrência aleatória.
+* **`findRandom(n: Int)`**: retorna n ocorrências aleatórias.
+
+#### **Validating**
+
+Usado para uma validação do check, algumas validações do gatling:
+
+* **`is(expected)`**: Valida se o valor retornado é igual ao parâmetro **expected**.
+* **`not(expected)`**: Valida se o valor retornado é diferente do **expected**
+* **`isNull`**: Valida se o valor retornado é **NULL**.
+* **`notNull`**: Valida se o valor retornado é diferente de **NULL**.
+* **`exists`**: Valida se o valor retornado existe.
+* **`notExists`**: Valida se o valor retornado existe.
+
+#### **Conditional Checking**
+
+**`checkIf(condition)(thenCheck)`**: O check fica dependente de uma condição para ocorrer.
+
+#### **Realizando o Check**
+
+Para realizar o check, juntamos todos os passos acima e assim formamos o check:
+
+```Scala
+/* O check valida se o código de resposta recebido é igual à 200 */
+.check(status.is(200)))
+
+/* O ckeck valida se o código de resposta recebido está entre 200 e 205 */
+.check(status.in(200 to 2010))
+
+/* O check valida se tiver 1 ocorrência de "aWord" */
+regex("aWord").find.exists
+
+/* O check valida se não tiver nenhuma ocorrência de "aWord" */
+regex("aWord").find.notExists
+
+/* O check valida se o conteúdo entre response body e o expected.json for verdadeira */
+bodyBytes.is(RawFileBody("expected.json"))
+```
+
+Para mais funcionalidades e exemplos, acessar a [documentação](https://gatling.io/docs/current/http/http_check/).
+
+### **Assertions**
+
+Assertions são utilizados para afirmar os requests baseados em estatísticas como seu tempo de resposta ou total de falhas. Igualmente ao Check, um assertion em gatling é definido em uma sequência de passos.
+
+#### **Scope**
+
+Aqui é definido o escopo em que o assertion vai atuar:
+
+* **`global`**: O assertion se baseia nas estatísticas de todos os requests.
+* **`forAll`**: O assertion se baseia nas estatísticas de cada request individualmente.
+* **`details(path)`**: O assertion se baseia nas estatísticas de um request ou um grupo de requests em específico. 
+
+#### **Statistics**
+
+Define qual estatística o assertion vai se basear:
+
+* **`responseTime`**: O assertion vai utilizar o tempo de resposta em millisegundos.
+* **`allRequests`**: O assertion vai utilizar o número total de requests.
+* **`failedRequests`**: O assertion vai utilizar o número de requests que falharam. 
+* **`successfulRequests`**: O assertion vai utilizar o número de requests que tiveram sucesso. 
+* **`requestPerSec:`**: O assertion vai utilizar a taxa de requests por segundo.
+
+#### **Metric**
+
+Define qual a métrica que o assertion vai utilizar, algumas métricas do gatling:
+
+##### **Response time**
+
+* **`min`**: O assertion afirma na menor métrica possível.
+* **`max`**: O assertion afirma na maior métrica possível.
+* **`mean`**: O assertion afirma na média entre a maior e menor métrica possível.
+* **`stdDev`**: O assertion afirma no desvio padrão da métrica.
+* **`percentile(per: Double)`**: O assertion afirma na porcentagem passada por parâmetro.
+
+##### **Number os requests**
+
+* **`percent`**: Usa o número de requests como uma porcentagem.
+
+#### **Condition**
+
+Define quais condições serão aplicadas à métrica, as condições podem ser combinadas em cadeia. Algumas condições do gatling:
+
+* **`lt(limite)`**: Verifica se o valor da métrica é menor que o limite passado no parâmetro.
+* **`lte(limite)`**: Verifica se o valor da métrica é menor ou igual ao limite. 
+* **`gt(limite)`**: Verifica se o valor da métrica é maior que o limite.
+* **`gte(limite)`**: Verifica se o valor da métrica é maior ou igual ao limite.
+* **`between(limMin, limMax)`**: Verifica se o valor da métrica está no intervalo entre limMin e limMax, incluindo os limites.
+* **`is(value)`**: Verifica se o valor da métrica é igual à **value** 
+* **`in(sequence)`**: Verifica se o valor da métrica está presente na sequência passada por parâmetro. 
+
+#### **Realizando o Assertion**
+
+De maneira similar ao Check, temos o assertion ao juntarmos todos os passos acima:
+
+```Scala
+/* Afirma se todos os requests têm o tempo de resposta menor do que 50ms */
+setUp(scn).assertions(global.responseTime.max.lt(50))
+
+/* Afirma se todo request têm menos do que 5% de falhas */
+setUp(scn).assertions(forAll.failedRequests.percent.lte(5))
+
+/* Afirma se todo request têm pelo menos 95% de sucessos */
+setUp(scn).assertions(forAll.sucessfulRequests.percent.gte(95))
+```
+
+Para mais funcionalidades e exempos, acessar [documentação](https://gatling.io/docs/current/general/assertions/).
 
 ## **Referências**
 
