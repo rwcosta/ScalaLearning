@@ -1,0 +1,63 @@
+{
+  "simulation": "reqres.MyFirstTest",
+  "simulationId": "myfirsttest",
+  "start": 1606451990045,
+  "description": "",
+  "scenarios": ["MyFirstTest"],
+  "assertions": [
+{
+  "path": "GET_USERS_01",
+  "target": "max of response time",
+  "condition": "is less than or equal to",
+  "expectedValues": [1500.0],
+  "result": true,
+  "message": "GET_USERS_01: max of response time is less than or equal to 1500.0",
+  "actualValue": [85.0]
+},
+{
+  "path": "GET_USER_01",
+  "target": "max of response time",
+  "condition": "is less than or equal to",
+  "expectedValues": [1500.0],
+  "result": true,
+  "message": "GET_USER_01: max of response time is less than or equal to 1500.0",
+  "actualValue": [59.0]
+},
+{
+  "path": "PUT_USER_01",
+  "target": "max of response time",
+  "condition": "is less than or equal to",
+  "expectedValues": [1500.0],
+  "result": true,
+  "message": "PUT_USER_01: max of response time is less than or equal to 1500.0",
+  "actualValue": [586.0]
+},
+{
+  "path": "POST_USER_01",
+  "target": "max of response time",
+  "condition": "is less than or equal to",
+  "expectedValues": [1500.0],
+  "result": true,
+  "message": "POST_USER_01: max of response time is less than or equal to 1500.0",
+  "actualValue": [481.0]
+},
+{
+  "path": "GET_DELAYED_RESPONSE",
+  "target": "max of response time",
+  "condition": "is less than or equal to",
+  "expectedValues": [1500.0],
+  "result": true,
+  "message": "GET_DELAYED_RESPONSE: max of response time is less than or equal to 1500.0",
+  "actualValue": [39.0]
+},
+{
+  "path": "Global",
+  "target": "percentage of successful events",
+  "condition": "is greater than or equal to",
+  "expectedValues": [95.0],
+  "result": true,
+  "message": "Global: percentage of successful events is greater than or equal to 95.0",
+  "actualValue": [99.73684210526315]
+}
+  ]
+}

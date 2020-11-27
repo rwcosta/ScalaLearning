@@ -1,0 +1,20 @@
+<testsuite name="reqres.MyFirstTest" tests="6" errors="0" failures="0" time="0">
+<testcase name="GET_USERS_01: max of response time is less than or equal to 1500.0" status="true" time="0">
+  <system-out>GET_USERS_01: max of response time is less than or equal to 1500.0</system-out>
+</testcase>
+<testcase name="GET_USER_01: max of response time is less than or equal to 1500.0" status="true" time="0">
+  <system-out>GET_USER_01: max of response time is less than or equal to 1500.0</system-out>
+</testcase>
+<testcase name="PUT_USER_01: max of response time is less than or equal to 1500.0" status="true" time="0">
+  <system-out>PUT_USER_01: max of response time is less than or equal to 1500.0</system-out>
+</testcase>
+<testcase name="POST_USER_01: max of response time is less than or equal to 1500.0" status="true" time="0">
+  <system-out>POST_USER_01: max of response time is less than or equal to 1500.0</system-out>
+</testcase>
+<testcase name="GET_DELAYED_RESPONSE: max of response time is less than or equal to 1500.0" status="true" time="0">
+  <system-out>GET_DELAYED_RESPONSE: max of response time is less than or equal to 1500.0</system-out>
+</testcase>
+<testcase name="Global: percentage of successful events is greater than or equal to 95.0" status="true" time="0">
+  <system-out>Global: percentage of successful events is greater than or equal to 95.0</system-out>
+</testcase>
+</testsuite>
