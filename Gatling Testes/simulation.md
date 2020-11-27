@@ -127,6 +127,57 @@ setUp(scn
     .protocols(httpProtocol)
 ```
 
+#### **Concurrent scenarios**
+
+É possível executar 2 ou mais scenarios de maneira concorrente:
+
+```Scala
+setUp(
+  scenario1.inject(injectionProfile1),
+  scenario2.inject(injectionProfile2)
+)
+```
+
+#### **Sequential Scenarios**
+
+Utilizando o método `andThen()`, é possível definir um scenario filho que vai executar após o término do seu scenario pai.
+
+```Scala
+setUp(
+  parent.inject(injectionProfile)
+    .andThen(
+      child1.inject(injectionProfile)
+        .andThen(grandChild.inject(injectionProfile)),
+      child2.inject(injectionProfile)
+    )
+)
+```
+
+#### **Throttling**
+
+Quando para o teste é mais importante lidar com requests por segundo do que usuários simultâneos, se torna interessante de utilizar o throttling. Utilizando o método `throttle`, o gatling possui alguns métodos que auxiliam a manipular os requests:
+
+* **`reachRps(target) in (duration)`**: A simulação atinge **target** requests em rampa durante **duration**.
+* **`jumpToRps(target)`**: Vai imediatamente para **target** requests.
+* **`holdFor(duration)`**: Mantém os requests por segundo durante **duration**.
+  
+```Scala
+setUp(scn.inject(constantUsersPerSec(100) during (30 minutes))).throttle(
+    reachRps(100) in (10 seconds),
+    holdFor(1 minute),
+    jumpToRps(50),
+    holdFor(2 hours)
+)
+```
+
+#### **Maximum duration**
+
+Utilizando `maxDuration` a simulação é forçada à encerrar independentemente de qualquer coisa.
+
+```Scala
+setUp(scn.inject(rampUsers(1000) during (20 minutes))).maxDuration(10 minutes)
+```
+
 ## **Checks e Assertions**
 
 ### **Checks**
