@@ -400,19 +400,19 @@ Após as estatísticas globais o gatling também informa os assertions que foram
 
 O gatling também gera um arquivo html que detalha todo o relatório da simulação de forma visual.
 
-![globalInf](https://github.com/rwcosta/ScalaLearning/blob/main/Gatling%20Testes/images/globalInf.png)
-
-![detailedResponse](https://github.com/rwcosta/ScalaLearning/blob/main/Gatling%20Testes/images/detailedResponse.png)
-
-![assertions](https://github.com/rwcosta/ScalaLearning/blob/main/Gatling%20Testes/images/assertions.png)
-
-![globalResponse](https://github.com/rwcosta/ScalaLearning/blob/main/Gatling%20Testes/images/globalResponse.png)
-
-![errors](https://github.com/rwcosta/ScalaLearning/blob/main/Gatling%20Testes/images/errors.png)
+<p align="center">
+  <img src="images/globalInf.png" >
+  <img src="images/detailedResponse.png" >
+  <img src="images/assertions.png" >
+  <img src="images/globalResponse.png" >
+  <img src="images/errors.png" >
+</p>
 
 Além de detalhar visualmente as informações do relatório do terminal, no index.hmtl o gatling também gera gráficos com informações sobre usuários ativos durante a simulação (abaixo), requests por segundo, respostas por segundo, entre outros.
 
-![usersAlongSim](https://github.com/rwcosta/ScalaLearning/blob/main/Gatling%20Testes/images/usersAlongSim.png)
+<p align="center">
+  <img src="images/usersAlongSim.png" >
+</p>
 
 ## **Referências**
 
