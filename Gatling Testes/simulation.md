@@ -326,20 +326,20 @@ O gatling automaticamente gera relatórios detalhados sobre as simulações exec
 
 ```console
 ================================================================================
-2020-11-27 10:20:40                                          35s elapsed
+2020-11-27 10:39:35                                          40s elapsed
 ---- Requests ------------------------------------------------------------------
-> Global                                                   (OK=731    KO=7     )
-> GET_USERS_01                                             (OK=152    KO=0     )
-> GET_USER_01                                              (OK=152    KO=0     )
-> PUT_USER_01                                              (OK=145    KO=7     )
-> POST_USER_01                                             (OK=152    KO=0     )
-> GET_DELAYED_RESPONSE                                     (OK=130    KO=0     )
+> Global                                                   (OK=833    KO=6     )
+> GET_USERS_01                                             (OK=172    KO=0     )
+> GET_USER_01                                              (OK=172    KO=0     )
+> PUT_USER_01                                              (OK=166    KO=6     )
+> POST_USER_01                                             (OK=172    KO=0     )
+> GET_DELAYED_RESPONSE                                     (OK=151    KO=0     )
 ---- Errors --------------------------------------------------------------------
-> status.find.is(200), but actually found 503                         7 (100,0%)
+> status.find.is(200), but actually found 503                         6 (100,0%)
 
 ---- MyFirstTest ---------------------------------------------------------------
-[###################################################-----------------------] 69%
-          waiting: 0      / active: 46     / done: 106   
+[#####################################################---------------------] 72%
+          waiting: 0      / active: 47     / done: 125   
 ================================================================================
 ```
 
@@ -351,39 +351,40 @@ O gatling automaticamente gera relatórios detalhados sobre as simulações exec
 Ao finalizar o teste, o gatling exibe algumas estatísticas gerais sobre a simulação:
 
 ```console
-Simulation reqres.MyFirstTest completed in 39 seconds
+Simulation reqres.MyFirstTest completed in 43 seconds
 Parsing log file(s)...
 Parsing log file(s) done
 Generating reports...
 
 ================================================================================
 ---- Global Information --------------------------------------------------------
-> request count                                        760 (OK=753    KO=7     )
-> min response time                                     15 (OK=15     KO=372   )
-> max response time                                    516 (OK=516    KO=516   )
-> mean response time                                   161 (OK=159    KO=416   )
-> std deviation                                        167 (OK=166    KO=53    )
-> response time 50th percentile                         50 (OK=50     KO=387   )
-> response time 75th percentile                        379 (OK=378    KO=436   )
-> response time 95th percentile                        397 (OK=397    KO=506   )
-> response time 99th percentile                        484 (OK=483    KO=514   )
-> mean requests/sec                                 19.487 (OK=19.308 KO=0.179 )
+> request count                                        860 (OK=854    KO=6     )
+> min response time                                     14 (OK=14     KO=210   )
+> max response time                                    614 (OK=614    KO=391   )
+> mean response time                                   162 (OK=161    KO=356   )
+> std deviation                                        169 (OK=169    KO=65    )
+> response time 50th percentile                         50 (OK=50     KO=385   )
+> response time 75th percentile                        378 (OK=378    KO=388   )
+> response time 95th percentile                        400 (OK=401    KO=390   )
+> response time 99th percentile                        506 (OK=506    KO=391   )
+> mean requests/sec                                 19.545 (OK=19.409 KO=0.136 )
 ---- Response Time Distribution ------------------------------------------------
-> t < 800 ms                                           753 ( 99%)
+> t < 800 ms                                           854 ( 99%)
 > 800 ms < t < 1200 ms                                   0 (  0%)
 > t > 1200 ms                                            0 (  0%)
-> failed                                                 7 (  1%)
+> failed                                                 6 (  1%)
 ---- Errors --------------------------------------------------------------------
-> status.find.is(200), but actually found 503                         7 (100,0%)
+> status.find.is(200), but actually found 503                         6 (100,0%)
 ================================================================================
 
+Reports generated in 0s.
+Please open the following file: /home/rennan/Área de Trabalho/gatling-charts-highcharts-bundle-3.4.1/results/myfirsttest-20201127133853743/index.html
 GET_USERS_01: max of response time is less than or equal to 150.0 : true
 GET_USER_01: max of response time is less than or equal to 150.0 : false
 PUT_USER_01: max of response time is less than or equal to 150.0 : false
 POST_USER_01: max of response time is less than or equal to 150.0 : false
 GET_DELAYED_RESPONSE: max of response time is less than or equal to 150.0 : true
 Global: percentage of successful events is greater than or equal to 95.0 : true
-
 ```
 
 * **request count**: Quantidade total de requests executados na simulação.
