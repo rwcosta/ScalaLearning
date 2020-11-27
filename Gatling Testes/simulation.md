@@ -466,6 +466,95 @@ Além de detalhar visualmente as informações do relatório do terminal, no ind
   <img src="images/usersAlongSim.png" >
 </p>
 
+## **Gatling utilizando Maven**
+
+Até então o gatling foi utilizado através do bundle baixado no gatling.io, mas também é possível criar um projeto gatling utilizando o Maven. Para isso utilizamos o gatling archetype, para o Maven criar o projeto gatling:
+
+```console
+rennan@rennan-Desktop:~/Área de Trabalho/Gatling Maven$ mvn archetype:generate -DarchetypeGroupId=io.gatling.highcharts -DarchetypeArtifactId=gatling-highcharts-maven-archetype
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by com.google.inject.internal.cglib.core.$ReflectUtils$1 (file:/usr/share/maven/lib/guice.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int,java.security.ProtectionDomain)
+WARNING: Please consider reporting this to the maintainers of com.google.inject.internal.cglib.core.$ReflectUtils$1
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< org.apache.maven:standalone-pom >-------------------
+[INFO] Building Maven Stub Project (No POM) 1
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] >>> maven-archetype-plugin:3.2.0:generate (default-cli) > generate-sources @ standalone-pom >>>
+[INFO] 
+[INFO] <<< maven-archetype-plugin:3.2.0:generate (default-cli) < generate-sources @ standalone-pom <<<
+[INFO] 
+[INFO] 
+[INFO] --- maven-archetype-plugin:3.2.0:generate (default-cli) @ standalone-pom ---
+[INFO] Generating project in Interactive mode
+[INFO] Archetype [io.gatling.highcharts:gatling-highcharts-maven-archetype:3.4.1] found in catalog remote
+Define value for property 'groupId': testing-excellence
+Define value for property 'artifactId': gatling-framework
+Define value for property 'version' 1.0-SNAPSHOT: : 
+Define value for property 'package' testing-excellence: : 
+Confirm properties configuration:
+groupId: testing-excellence
+artifactId: gatling-framework
+version: 1.0-SNAPSHOT
+package: testing-excellence
+ Y: : Y
+[INFO] ----------------------------------------------------------------------------
+[INFO] Using following parameters for creating project from Archetype: gatling-highcharts-maven-archetype:3.4.1
+[INFO] ----------------------------------------------------------------------------
+[INFO] Parameter: groupId, Value: testing-excellence
+[INFO] Parameter: artifactId, Value: gatling-framework
+[INFO] Parameter: version, Value: 1.0-SNAPSHOT
+[INFO] Parameter: package, Value: testing-excellence
+[INFO] Parameter: packageInPathFormat, Value: testing-excellence
+[INFO] Parameter: package, Value: testing-excellence
+[INFO] Parameter: groupId, Value: testing-excellence
+[INFO] Parameter: artifactId, Value: gatling-framework
+[INFO] Parameter: version, Value: 1.0-SNAPSHOT
+[INFO] Project created from Archetype in dir: /home/rennan/Área de Trabalho/Gatling Maven/gatling-framework
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  30.034 s
+[INFO] Finished at: 2020-11-27T13:46:44-03:00
+[INFO] ------------------------------------------------------------------------
+```
+
+Com isso, o Maven vai criar uma pasta no diretório em que o terminal estava acessando no momento que o gatling archetype foi executado. Dentro da pasta, indo para o diretório `src/test/scala` o Maven criou três objetos por padrão que não vão ser utilizados no nosso caso, então removemos.
+
+Em seguida ainda no diretório `/scala`, criamos um diretório `reqres` que vai conter a nossa classe de simulação. Dentro do diretório `reqres` vamos colocar a classe da simulação. Para executar a simulação, dentro da pasta inicial do projeto:
+
+```console
+rennan@rennan-Desktop:~/Área de Trabalho/Gatling Maven/gatling-framework$ mvn gatling:test -Dgatling.simulationClass=reqres.MyFirstTest
+```
+
+### **Passando parâmetro via linha de comando**
+
+Também é possível passar parâmetros via linha de comando ao executar a simulação com o Maven. Para isso será necessário definir um método `getProperty()` e as variáveis que vão armazenar os parâmetros:
+
+```Scala
+private def getProperty(name: String, defaultValue: String): String = {
+    Option(System.getenv(name))
+        .orElse(Option(System.getProperty(name)))
+        .getOrElse(defaultValue)
+}
+
+def users: Int = getProperty("users", "1").toInt
+def rampDuration: Int = getProperty("ramp_duration", "10").toInt
+def rampPerSecRate: Int = getProperty("ramp_per_sec_rate", s"${users+10}").toInt
+def constantUserDuration: Int = getProperty("const_user_duration", "10").toInt
+def heavisideMult: Int = getProperty("heaviside_mult", "2").toInt
+def heavisideDuration: Int = getProperty("heaviside_duration", "10").toInt
+```
+
+Com isto, a execução fica:
+
+```console
+rennan@rennan-Desktop:~/Área de Trabalho/Gatling Maven/gatling-framework$ mvn gatling:test -Dgatling.simulationClass=reqres.MyFirstTest -Dusers=10 -Dheaviside_mult=3 -Dheaviside_duration=5 -Dconst_user_duration=5 -Dramp_per_sec_rate=15 -Dramp_duration=5
+```
+
 ## **Referências**
 
 * [Documentação Gatling](https://gatling.io/docs/current/)
