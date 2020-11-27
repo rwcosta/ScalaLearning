@@ -316,8 +316,103 @@ Ex:
 
 /* ... */
 ```
-
 Para mais funcionalidades e exempos, acessar [documentação](https://gatling.io/docs/current/general/assertions/).
+
+## **Geração de relatório**
+
+### **Relatório via terminal**
+
+O gatling automaticamente gera relatórios detalhados sobre as simulações executadas, as estatísticas da simulação são atualizadas no terminal a cada 5s de execução:
+
+```console
+================================================================================
+2020-11-27 10:20:40                                          35s elapsed
+---- Requests ------------------------------------------------------------------
+> Global                                                   (OK=731    KO=7     )
+> GET_USERS_01                                             (OK=152    KO=0     )
+> GET_USER_01                                              (OK=152    KO=0     )
+> PUT_USER_01                                              (OK=145    KO=7     )
+> POST_USER_01                                             (OK=152    KO=0     )
+> GET_DELAYED_RESPONSE                                     (OK=130    KO=0     )
+---- Errors --------------------------------------------------------------------
+> status.find.is(200), but actually found 503                         7 (100,0%)
+
+---- MyFirstTest ---------------------------------------------------------------
+[###################################################-----------------------] 69%
+          waiting: 0      / active: 46     / done: 106   
+================================================================================
+```
+
+* De início tem-se a data, hora e tempo de execução atual.
+* Na parte de **Requests** é exibido em escopo global quantos requests deram OK e quantos deram KO, logo abaixo é exibido o mesmo para cada request individualmente.
+* Na parte de **Errors** é exibido os checks que não foram validados.
+* Por último é exibido a progressão atual do teste em porcentagem, logo abaixo também é exibido algumas informações sobre os usuários injetados.
+
+Ao finalizar o teste, o gatling exibe algumas estatísticas gerais sobre a simulação:
+
+```console
+Simulation reqres.MyFirstTest completed in 39 seconds
+Parsing log file(s)...
+Parsing log file(s) done
+Generating reports...
+
+================================================================================
+---- Global Information --------------------------------------------------------
+> request count                                        760 (OK=753    KO=7     )
+> min response time                                     15 (OK=15     KO=372   )
+> max response time                                    516 (OK=516    KO=516   )
+> mean response time                                   161 (OK=159    KO=416   )
+> std deviation                                        167 (OK=166    KO=53    )
+> response time 50th percentile                         50 (OK=50     KO=387   )
+> response time 75th percentile                        379 (OK=378    KO=436   )
+> response time 95th percentile                        397 (OK=397    KO=506   )
+> response time 99th percentile                        484 (OK=483    KO=514   )
+> mean requests/sec                                 19.487 (OK=19.308 KO=0.179 )
+---- Response Time Distribution ------------------------------------------------
+> t < 800 ms                                           753 ( 99%)
+> 800 ms < t < 1200 ms                                   0 (  0%)
+> t > 1200 ms                                            0 (  0%)
+> failed                                                 7 (  1%)
+---- Errors --------------------------------------------------------------------
+> status.find.is(200), but actually found 503                         7 (100,0%)
+================================================================================
+
+GET_USERS_01: max of response time is less than or equal to 150.0 : true
+GET_USER_01: max of response time is less than or equal to 150.0 : false
+PUT_USER_01: max of response time is less than or equal to 150.0 : false
+POST_USER_01: max of response time is less than or equal to 150.0 : false
+GET_DELAYED_RESPONSE: max of response time is less than or equal to 150.0 : true
+Global: percentage of successful events is greater than or equal to 95.0 : true
+
+```
+
+* **request count**: Quantidade total de requests executados na simulação.
+* **min response time**: Menor tempo de resposta em um request.
+* **max response time**: Maior tempo de resposta em um request.
+* **mean response time**: Tempo médio de resposta dos request.
+* **std deviation**: Desvio padrão.
+* **response time nth percentile**: Tempo de resposta em uma progressão de n% da simulação.
+* **mean requests/sec**: Média de requests por segundo.
+
+Após as estatísticas globais o gatling também informa os assertions que foram validados, no nosso caso houveram 3 casos que não foram validados pois os requests tiveram o tempo de resposta maior do que 150ms.
+
+## **Relatório index.html**
+
+O gatling também gera um arquivo html que detalha todo o relatório da simulação de forma visual.
+
+![globalInf](https://github.com/rwcosta/ScalaLearning/blob/main/Gatling%20Testes/images/globalInf.png)
+
+![detailedResponse](https://github.com/rwcosta/ScalaLearning/blob/main/Gatling%20Testes/images/detailedResponse.png)
+
+![assertions](https://github.com/rwcosta/ScalaLearning/blob/main/Gatling%20Testes/images/assertions.png)
+
+![globalResponse](https://github.com/rwcosta/ScalaLearning/blob/main/Gatling%20Testes/images/globalResponse.png)
+
+![errors](https://github.com/rwcosta/ScalaLearning/blob/main/Gatling%20Testes/images/errors.png)
+
+Além de detalhar visualmente as informações do relatório do terminal, no index.hmtl o gatling também gera gráficos com informações sobre usuários ativos durante a simulação (abaixo), requests por segundo, respostas por segundo, entre outros.
+
+![usersAlongSim](https://github.com/rwcosta/ScalaLearning/blob/main/Gatling%20Testes/images/usersAlongSim.png)
 
 ## **Referências**
 
@@ -325,3 +420,4 @@ Para mais funcionalidades e exempos, acessar [documentação](https://gatling.io
 * [Gatling Tutorials for Beginners by James Willet](https://www.youtube.com/watch?v=6Uc--YQMwf4&list=PLw_jGKXm9lIYpTotIJ-R31pXS7qqwXstt)
 * [Testes de carga e performance com Gatling.io – Eduardo Costa](https://www.youtube.com/watch?v=-tk24HMG41g)
 * [Gatling Load Testing Part 1 – Using Gatling](https://blog.codecentric.de/en/2017/06/gatling-load-testing-part-1-using-gatling/)
+* [Performance Testing Framework with Gatling and Maven](https://devqa.io/gatling-maven-performance-test-framework/)
