@@ -64,7 +64,7 @@ class MyFirstTest extends Simulation {
                 rampUsersPerSec(users) to rampPerSecRate during(rampDuration)
             ))
             .assertions(
-                forAll.responseTime.max.lte(1500),
+                forAll.responseTime.max.lte(150),
                 global.successfulRequests.percent.gte(95)
             )
             .protocols(httpProtocol)
