@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="images/gatlingBanner.png" >
+  <img src="Gatling%20Testes/images/gatlingBanner.png" >
 </p>
 
 # Seções
