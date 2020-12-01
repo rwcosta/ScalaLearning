@@ -16,6 +16,11 @@ import io.gatling.jdbc.Predef_ /* caso utilize feeder */
 
 A classe de teste precisa estender a classe Simulation que é estruturada em 4 partes:
 
+- [HTTP Protocol](#http)
+- [Headers](#headers)
+- [Scenario](#scenario)
+- [Simulation](#simulation)
+
 ### **HTTP Protocol**
 
 O Gatling HTTP faz com que seja possível utilizar o protocolo HTTP para realizar os testes que podem ser aplicados em APIs, sites e web services. Utilizando `http.baseUrl()` setamos o **httpProtocol** para o nosso scenario. Vale ressaltar que também é possível realizar o teste em vários alvos ao mesmo tempo utilizando o `http.baseUrls()`.
