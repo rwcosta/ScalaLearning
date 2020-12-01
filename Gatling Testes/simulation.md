@@ -1,4 +1,10 @@
-﻿# Simulações em Gatling
+﻿# **Simulações em Gatling**
+
+- [Imports](#imports)
+- [Estrutura](#estrutura)
+- [Checks e Assertions](#checks-n-assertions)
+- [Geração de relatório](#relatorio)
+- [Gatling utilizando Maven](#maven)
 
 ## **Imports**
 
@@ -453,7 +459,7 @@ Global: percentage of successful events is greater than or equal to 95.0 : true
 
 Após as estatísticas globais o gatling também informa os assertions que foram validados, no nosso caso houveram 3 casos que não foram validados pois os requests tiveram o tempo de resposta maior do que 150ms.
 
-## **Relatório index.html**
+### **Relatório index.html**
 
 O gatling também gera um arquivo html que detalha todo o relatório da simulação de forma visual.
 
