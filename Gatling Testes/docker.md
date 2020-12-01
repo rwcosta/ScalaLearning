@@ -1,9 +1,9 @@
 # **Criando uma imagem docker**
 
 - [Dockerfile](#dockerfile)
-- [Criando a imagem](#criando-imagem)
-- [Rodando um container na Imagem](#rodando-container)
-- [Referências](#referencias)
+- [Criando a imagem](#criando-a-imagem)
+- [Rodando um container na Imagem](#rodando-um-container-na-imagem)
+- [Referências](#referências)
 
 ## **Dockerfile**
 
