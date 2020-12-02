@@ -2,7 +2,7 @@
 
 - [Imports](#imports)
 - [Estrutura](#estrutura)
-- [Checks e Assertions](#checks-n-assertions)
+- [Checks e Assertions](#checks-e-assertions)
 - [Geração de relatório](#geração-de-relatório)
 - [Gatling utilizando Maven](#gatling-utilizando-maven)
 
