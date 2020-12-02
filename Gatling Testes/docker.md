@@ -1,13 +1,13 @@
 # **Criando uma imagem docker**
 
-- [Dockerfile](#dockerfile)
-- [Criando a imagem](#criando-a-imagem)
-- [Rodando um container na Imagem](#rodando-um-container-na-imagem)
-- [Referências](#referências)
+    - [**Dockerfile**](#dockerfile)
+    - [**Criando a imagem**](#criando-a-imagem)
+    - [**Rodando um container na Imagem**](#rodando-um-container-na-imagem)
+    - [**Referências**](#referências)
 
 ## **Dockerfile**
 
-Para a criação de uma imagem docker nós utilizamos o dockerfile:
+Para a criação de uma imagem docker nós utilizamos o Dockerfile:
 
 ```Dockerfile
 FROM maven:3-alpine
@@ -38,7 +38,7 @@ EXPOSE 8080
 CMD ["echo", "Gatling-Maven criado."]
 ```
 
-Utilizando como base a imagem do **maven** que já contém o **openjdk** e utiliza a distro linux **Alpine** que é mais leve do que outras distribuições pesando 5mb em média. Utilizando o gerenciador de pacotes apk, instalamos o bash e o scala. Também foi instalado o python3 para auxiliar na visualização do arquivo `index.hmtl` utilizando a porta 8080 do container que foi indicado pelo `EXPOSE`.
+Utilizamos como base a imagem do maven `maven:3-alpine` que já contém o **openjdk** e utiliza a distro linux **Alpine** que é mais leve do que outras distribuições pesando 5mb em média. Utilizando o gerenciador de pacotes apk, instalamos o bash e o scala. Também foi instalado o `python3` para auxiliar na visualização do arquivo `index.hmtl` utilizando a porta 8080 do container que foi indicado pelo `EXPOSE`.
 
 ## **Criando a imagem**
 
@@ -68,7 +68,7 @@ $ docker container run -d -p 8080:8080 --name MyContainer -v myvolume:/user/src/
 ### **Parâmetros**
 
 * **`-d`**: Entra em modo **daemon**.
-* **`-p 8080:8080`**: Informa para o docker ligar a nossa porta 8080 do host (direita) com a porta 8080 do container (esquerda).
+* **`-p 8080:8080`**: Informa para o docker ligar a nossa porta 8080 do host (esquerda) com a porta 8080 do container (direita).
 * **`--name MyContainer`**: Define uma nome para o nosso container, assim não precisamos ficar passando o seu ID.
 * **`-v myvolume:/user/src/myimage`**: Definimos um volume para que os dados do container não sejam perdidos quando encerrar a execução, caso Ubuntu o volume será gravado em `/var/lib/docker/volumes/myvolume/_data/`. Nesse local serão armazenados os dados do `WORKDIR` da imagem, `/user/src/myimage` no nosso caso.
 
@@ -81,7 +81,7 @@ CONTAINER ID        IMAGE                  COMMAND                  CREATED     
 9affc3b57550        rwcosta/mvngtlsim:v1   "/usr/local/bin/mvn-…"   12 minutes ago      Up 12 minutes       0.0.0.0:8080->8080/tcp   MyContainer
 ```
 
-Para entrar no moto interativo no container utilizamos:
+Para entrar no modo interativo no container utilizamos:
 
 ```console
 $ docker container exec -it MyContainer /bin/bash
@@ -102,7 +102,7 @@ Caso seja necessário visualizar o relatório gerado no `index.html`, basta ir p
 pushd index.html; python3 -m http.server 8080; popd;
 ```
 
-Para visualizar os relatórios basta acessar o `localhost:8080/` em qualquer navegador.
+Para visualizar os relatórios basta acessar o `localhost:8080` em qualquer navegador.
 
 ## **Referências**
 
