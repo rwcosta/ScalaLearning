@@ -3,8 +3,8 @@
 - [Imports](#imports)
 - [Estrutura](#estrutura)
 - [Checks e Assertions](#checks-n-assertions)
-- [Geração de relatório](#relatorio)
-- [Gatling utilizando Maven](#maven)
+- [Geração de relatório](#geração-de-relatório)
+- [Gatling utilizando Maven](#gatling-utilizando-maven)
 
 ## **Imports**
 
@@ -22,7 +22,7 @@ import io.gatling.jdbc.Predef_ /* caso utilize feeder */
 
 A classe de teste precisa estender a classe Simulation que é estruturada em 4 partes:
 
-- [HTTP Protocol](#http)
+- [HTTP Protocol](#http-protocol)
 - [Headers](#headers)
 - [Scenario](#scenario)
 - [Simulation](#simulation)
