@@ -19,22 +19,6 @@ FROM maven:3-alpine
 COPY . /user/src/myimage
 WORKDIR /user/src/myimage
 
-ENV SCALA_VERSION=2.13.4 \
-    SCALA_HOME=/usr/share/scala
-
-# NOTE: bash is used by scala/scalac scripts, and it cannot be easily replaced with ash.
-RUN apk add --no-cache --virtual=.build-dependencies wget ca-certificates && \
-    apk add --no-cache bash curl jq && \
-    cd "/tmp" && \
-    wget --no-verbose "https://downloads.typesafe.com/scala/${SCALA_VERSION}/scala-${SCALA_VERSION}.tgz" && \
-    tar xzf "scala-${SCALA_VERSION}.tgz" && \
-    mkdir "${SCALA_HOME}" && \
-    rm "/tmp/scala-${SCALA_VERSION}/bin/"*.bat && \
-    mv "/tmp/scala-${SCALA_VERSION}/bin" "/tmp/scala-${SCALA_VERSION}/lib" "${SCALA_HOME}" && \
-    ln -s "${SCALA_HOME}/bin/"* "/usr/bin/" && \
-    apk del .build-dependencies && \
-    rm -rf "/tmp/"*
-
 RUN apk update \
     && apk add python3
 
@@ -43,14 +27,14 @@ EXPOSE 8080
 CMD ["echo", "Gatling-Maven criado."]
 ```
 
-Utilizamos como base a imagem do maven `maven:3-alpine` que já contém o **openjdk** e utiliza a distro linux **Alpine** que é mais leve do que outras distribuições pesando 5mb em média. Utilizando o gerenciador de pacotes apk, instalamos o bash e o scala. Também foi instalado o `python3` para auxiliar na visualização do arquivo `index.hmtl` utilizando a porta 8080 do container que foi indicado pelo `EXPOSE`.
+Utilizamos como base a imagem do maven `maven:3-alpine` que já contém o **openjdk** e utiliza a distro linux **Alpine** que é mais leve do que outras distribuições pesando 5mb em média. Também foi instalado o `python3` para auxiliar na visualização do arquivo `index.hmtl` utilizando a porta 8080 do container que foi indicado pelo `EXPOSE`.
 
 ## **Criando a imagem**
 
 No Dockerfile foi especificado para copiar todos os arquivos do diretório atual para a imagem, no nosso caso foi copiado o arquivo `gatling-framework` que foi criado pelo `mvn archetype` já contendo as simulações. Para criar a imagem basta executar:
 
 ```console
-$ docker build -t rwcosta/mvngtlsim:v1 .
+$ docker build -t rwcosta/mvngtl:v1 .
 ```
 
 Caso o Dockerfile não esteja no diretório atual, é necessário especificar após o nome da imagem. Com a imagem criada é possível visualizá-la:
@@ -59,7 +43,7 @@ Caso o Dockerfile não esteja no diretório atual, é necessário especificar ap
 $ docker image ls
 
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-rwcosta/mvngtlsim   v1                  00ae4e5eeb38        2 hours ago         197MB
+rwcosta/mvngtl      v1                  00ae4e5eeb38        2 hours ago         197MB
 ```
 
 ## **Rodando um container na Imagem**
@@ -67,7 +51,7 @@ rwcosta/mvngtlsim   v1                  00ae4e5eeb38        2 hours ago         
 Para rodar um container na imagem criada utilizamos:
 
 ```console
-$ docker container run -d -p 8080:8080 --name MyContainer -v myvolume:/user/src/myimage -it rwcosta/mvngtlsim:v1 /bin/bash
+$ docker container run -d -p 8080:8080 --name MyContainer -v gtl-volm:/user/src/myimage -it rwcosta/mvngtl:v1 /bin/bash
 ```
 
 ### **Parâmetros**
@@ -75,7 +59,15 @@ $ docker container run -d -p 8080:8080 --name MyContainer -v myvolume:/user/src/
 * **`-d`**: Entra em modo **daemon**.
 * **`-p 8080:8080`**: Informa para o docker ligar a nossa porta 8080 do host (esquerda) com a porta 8080 do container (direita).
 * **`--name MyContainer`**: Define uma nome para o nosso container, assim não precisamos ficar passando o seu ID.
-* **`-v myvolume:/user/src/myimage`**: Definimos um volume para que os dados do container não sejam perdidos quando encerrar a execução, caso Ubuntu o volume será gravado em `/var/lib/docker/volumes/myvolume/_data/`. Nesse local serão armazenados os dados do `WORKDIR` da imagem, `/user/src/myimage` no nosso caso.
+* **`-v gtl-volm:/user/src/myimage`**: Definimos um volume para que os dados do container não sejam perdidos quando encerrar a execução, nesse local serão armazenados os dados do `WORKDIR` da imagem, `/user/src/myimage` no nosso caso. Para descobrir onde os dados do container estão salvos pode-se utilizar o comando `docker inspect MyContainer | grep "gtl-volm"`:
+
+```console
+"gtl-volm:/user/src/myimage"
+"Name": "gtl-volm",
+"Source": "/var/snap/docker/common/var-lib-docker/volumes/gtl-volm/_data",
+```
+
+O local do meu volume `gtl-vol` é em `/var/snap/docker/common/var-lib-docker/volumes/gtl-volm/_data`.
 
 Para visualizar o container:
 
@@ -83,7 +75,7 @@ Para visualizar o container:
 $ docker container ls
 
 CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS              PORTS                    NAMES
-9affc3b57550        rwcosta/mvngtlsim:v1   "/usr/local/bin/mvn-…"   12 minutes ago      Up 12 minutes       0.0.0.0:8080->8080/tcp   MyContainer
+9affc3b57550        rwcosta/mvngtl:v1      "/usr/local/bin/mvn-…"   12 minutes ago      Up 12 minutes       0.0.0.0:8080->8080/tcp   MyContainer
 ```
 
 Para entrar no modo interativo no container utilizamos:
