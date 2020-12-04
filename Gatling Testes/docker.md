@@ -16,8 +16,8 @@ Para a criação de uma imagem docker nós utilizamos o Dockerfile:
 
 ```Dockerfile
 FROM maven:3-alpine
-COPY . /user/src/mvngtl
-WORKDIR /user/src/mvngtl
+COPY . /user/src/myimage
+WORKDIR /user/src/myimage
 
 RUN apk update \
     && apk add python3
@@ -51,7 +51,7 @@ rwcosta/mvngtl      v1                  00ae4e5eeb38        2 hours ago         
 Para rodar um container na imagem criada utilizamos:
 
 ```console
-$ docker container run -d -p 8080:8080 --name MyContainer -v $HOME/myvolume:/user/src/mvngtl -it rwcosta/mvngtl:v1 /bin/bash
+$ docker container run -d -p 8080:8080 --name MyContainer -v /$HOME/myvolume:/user/src/myimage -it rwcosta/mvngtl:v1 /bin/bash
 ```
 
 ### **Parâmetros**
@@ -59,7 +59,7 @@ $ docker container run -d -p 8080:8080 --name MyContainer -v $HOME/myvolume:/use
 * **`-d`**: Entra em modo **daemon**.
 * **`-p 8080:8080`**: Informa para o docker ligar a nossa porta 8080 do host (esquerda) com a porta 8080 do container (direita).
 * **`--name MyContainer`**: Define uma nome para o nosso container, assim não precisamos ficar passando o seu ID.
-* **`-v $HOME/myvolume:/user/src/mvngtl`**: Definimos um volume para que os dados do container não sejam perdidos quando encerrar a execução, caso Ubuntu o volume será gravado em `/var/lib/docker/volumes/myvolume/_data/` por padrão, mas no nosso caso definimos que será gravada na pasta `/home`. Nesse local serão armazenados os dados do `WORKDIR` da imagem, `/user/src/mvngtl` no nosso caso.
+* **`-v $HOME/myvolume:/user/src/myimage`**: Definimos um volume para que os dados do container não sejam perdidos quando encerrar a execução, caso Ubuntu o volume será gravado em `/var/lib/docker/volumes/myvolume/_data/` por padrão, mas no nosso caso definimos que será gravada na pasta `/home`. Nesse local serão armazenados os dados do `WORKDIR` da imagem, `/user/src/myimage` no nosso caso.
 
 Para visualizar o container:
 
