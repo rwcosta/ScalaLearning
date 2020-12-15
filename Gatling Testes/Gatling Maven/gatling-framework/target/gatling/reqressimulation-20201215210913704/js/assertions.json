@@ -1,0 +1,63 @@
+{
+  "simulation": "simulations.ReqresSimulation",
+  "simulationId": "reqressimulation",
+  "start": 1608066553704,
+  "description": "",
+  "scenarios": ["PostDelete scenario", "GetDelete scenario"],
+  "assertions": [
+{
+  "path": "Get users",
+  "target": "max of response time",
+  "condition": "is less than or equal to",
+  "expectedValues": [250.0],
+  "result": true,
+  "message": "Get users: max of response time is less than or equal to 250.0",
+  "actualValue": [89.0]
+},
+{
+  "path": "Get user",
+  "target": "max of response time",
+  "condition": "is less than or equal to",
+  "expectedValues": [500.0],
+  "result": true,
+  "message": "Get user: max of response time is less than or equal to 500.0",
+  "actualValue": [55.0]
+},
+{
+  "path": "Post user",
+  "target": "max of response time",
+  "condition": "is less than or equal to",
+  "expectedValues": [650.0],
+  "result": true,
+  "message": "Post user: max of response time is less than or equal to 650.0",
+  "actualValue": [620.0]
+},
+{
+  "path": "Put user",
+  "target": "max of response time",
+  "condition": "is less than or equal to",
+  "expectedValues": [500.0],
+  "result": true,
+  "message": "Put user: max of response time is less than or equal to 500.0",
+  "actualValue": [484.0]
+},
+{
+  "path": "Delete user",
+  "target": "max of response time",
+  "condition": "is less than or equal to",
+  "expectedValues": [600.0],
+  "result": true,
+  "message": "Delete user: max of response time is less than or equal to 600.0",
+  "actualValue": [475.0]
+},
+{
+  "path": "Global",
+  "target": "percentage of failed events",
+  "condition": "is less than or equal to",
+  "expectedValues": [5.0],
+  "result": true,
+  "message": "Global: percentage of failed events is less than or equal to 5.0",
+  "actualValue": [0.0]
+}
+  ]
+}

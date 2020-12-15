@@ -1,0 +1,20 @@
+<testsuite name="simulations.ReqresSimulation" tests="6" errors="0" failures="0" time="0">
+<testcase name="Get users: max of response time is less than or equal to 250.0" status="true" time="0">
+  <system-out>Get users: max of response time is less than or equal to 250.0</system-out>
+</testcase>
+<testcase name="Get user: max of response time is less than or equal to 500.0" status="true" time="0">
+  <system-out>Get user: max of response time is less than or equal to 500.0</system-out>
+</testcase>
+<testcase name="Post user: max of response time is less than or equal to 650.0" status="true" time="0">
+  <system-out>Post user: max of response time is less than or equal to 650.0</system-out>
+</testcase>
+<testcase name="Put user: max of response time is less than or equal to 500.0" status="true" time="0">
+  <system-out>Put user: max of response time is less than or equal to 500.0</system-out>
+</testcase>
+<testcase name="Delete user: max of response time is less than or equal to 600.0" status="true" time="0">
+  <system-out>Delete user: max of response time is less than or equal to 600.0</system-out>
+</testcase>
+<testcase name="Global: percentage of failed events is less than or equal to 5.0" status="true" time="0">
+  <system-out>Global: percentage of failed events is less than or equal to 5.0</system-out>
+</testcase>
+</testsuite>
