@@ -2,13 +2,12 @@ package requests
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
-import config.Config.myUrl
+import config.ConfigReqres.{baseUrl, header}
 
 object GetUser {
-    val header = Map("content-type" -> "application/json")
-
     val getUser = exec(http("Get user")
-        .get(myUrl + "/api/users/2")
+        .get(baseUrl + "/api/users/${userId}")
         .headers(header)
+        .check(status.is(200))
     )
 }

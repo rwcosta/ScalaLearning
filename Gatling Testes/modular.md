@@ -1,12 +1,12 @@
 # **Modularização dos Testes**
 
-Para uma melhor organização modularizamos o teste utilizado em [simulation](https://github.com/rwcosta/ScalaLearning/blob/main/Gatling%20Testes/simulation.md). O projeto foi dividido em 4 partes:
+Para uma melhor organização modularizamos o teste utilizado em [simulation](https://github.com/rwcosta/ScalaLearning/blob/main/Gatling%20Testes/simulation.md) com algumas modificações. O projeto foi dividido em 4 partes:
 
   - [**Config**](#config)
   - [**Requests**](#requests)
   - [**Scenarios**](#scenarios)
   - [**Simulations**](#simulations)
-  - [**Código-fonte**](https://github.com/rwcosta/ScalaLearning/tree/main/Gatling%20Testes/Gatling%20Bundle/user-files/simulations/reqres)
+  - [**Código-fonte**](https://github.com/rwcosta/ScalaLearning/tree/main/Gatling%20Testes/Gatling%20Maven/gatling-framework/src/test/scala/simulations/reqres)
 
 ## **Config**
 
@@ -15,21 +15,20 @@ Será criado um objedo **Config** que conterá a nossa url base, parâmetros e v
 ```Scala
 package config
 
-object Config {
+object ConfigReqres {
     private def getProperty(name: String, defaultValue: String): String = {
         Option(System.getenv(name))
             .orElse(Option(System.getProperty(name)))
             .getOrElse(defaultValue)
     }
 
-    val myUrl = "https://reqres.in"
+    val header = Map(
+        "content-type" -> "application/json"
+    )
+
+    val baseUrl = "https://reqres.in"
 
     def users: Int = getProperty("users", "1").toInt
-    def rampDuration: Int = getProperty("ramp_duration", "10").toInt
-    def rampPerSecRate: Int = getProperty("ramp_per_sec_rate", s"${users+10}").toInt
-    def constantUserDuration: Int = getProperty("const_user_duration", "10").toInt
-    def heavisideMult: Int = getProperty("heaviside_mult", "2").toInt
-    def heavisideDuration: Int = getProperty("heaviside_duration", "10").toInt
 }
 ```
 
@@ -44,14 +43,13 @@ package requests
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
-import config.Config.myUrl
+import config.ConfigReqres.{baseUrl, header}
 
 object GetUser {
-    val header = Map("content-type" -> "application/json")
-
     val getUser = exec(http("Get user")
-        .get(myUrl + "/api/users/2")
+        .get(baseUrl + "/api/users/${userId}")
         .headers(header)
+        .check(status.is(200))
     )
 }
 ```
@@ -63,50 +61,70 @@ package requests
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
-import config.Config.myUrl
+import config.ConfigReqres.{baseUrl, header}
 
 object GetUsers {
-    val header = Map("content-type" -> "application/json")
-
     val getUsers = exec(http("Get users")
-        .get(myUrl + "/api/users?page=2")
-        .headers(header)
-    )
-}
-```
-
-### **CreateUser:**
-
-```Scala
-package requests
-
-import io.gatling.core.Predef._
-import io.gatling.http.Predef._
-import config.Config.myUrl
-
-object CreateUser {
-    val createUser = exec(http("Create new user")
-        .post(myUrl + "/api/users")
-        .body(StringBody("""{ "name": "morpheus", "job": "leader" }""")).asJson
-        .check(status.is(201))
-    )
-}
-```
-
-### **UpdateUser:**
-
-```Scala
-package requests
-
-import io.gatling.core.Predef._
-import io.gatling.http.Predef._
-import config.Config.myUrl
-
-object UpdateUser {
-    val updateUser = exec(http("Update user")
-        .put(myUrl + "/api/users/2")
-        .body(StringBody("""{ "name": "morpheus", "job": "zion resident" }""")).asJson
+        .get(baseUrl + "/api/users")
+        .queryParam("page", 2)
         .check(status.is(200))
+        .check(jsonPath("$.data[1].id").saveAs("userId"))
+    )
+}
+```
+
+### **PostUser:**
+
+```Scala
+package requests
+
+import io.gatling.core.Predef._
+import io.gatling.http.Predef._
+import config.ConfigReqres.{baseUrl, header}
+
+object PostUser {
+    val postUser = exec(http("Post user")
+        .post(baseUrl + "/api/users")
+        .body(StringBody("""{ "name": "James", "job": "spy" }""")).asJson
+        .check(status.is(201))
+        .check(jsonPath("$.id").saveAs("userId"))
+    )
+}
+```
+
+### **PutUser:**
+
+```Scala
+package requests
+
+import io.gatling.core.Predef._
+import io.gatling.http.Predef._
+import config.ConfigReqres.{baseUrl, header}
+
+object PutUser {
+    val putUser = exec(http("Put user")
+        .put(baseUrl + "/api/users/${userId}")
+        .body(StringBody("""{ "name": "Bond", "job": "secret spy" }""")).asJson
+        .headers(header)
+        .check(status.is(200))
+        .check(regex("updatedAt").find.exists)
+    )
+}
+```
+
+### **DeleteUser:**
+
+```Scala
+package requests
+
+import io.gatling.core.Predef._
+import io.gatling.http.Predef._
+import config.ConfigReqres.{baseUrl, header}
+
+object DeleteUser {
+    val deleteUser = exec(http("Delete user")
+        .delete(baseUrl + "/api/users/${userId}")
+        .check(status.is(204))
     )
 }
 ```
@@ -115,49 +133,47 @@ object UpdateUser {
 
 Aqui conterão os scenarios que poderam ser setados em nossas simulações, no nosso caso foram definidos 3 scenarios:
 
-### **CreateUserScenario:**
+### **PostDeleteScenario:**
 
 ```Scala
 package scenarios
 
 import scala.concurrent.duration._
 import io.gatling.core.Predef.scenario
-import requests.CreateUser
+import requests.{PostUser, GetUser, PutUser, DeleteUser}
 
-object CreateUserScenario {
-    val createUserScenario = scenario("Create user scenario")
-        .exec(CreateUser.createUser).pause(2 seconds)
+object PostDeleteScenario {
+    val postDeleteScenario = scenario("PostDelete scenario")
+        .exec(PostUser.postUser)
+        .pause(2 seconds)
+
+        .exec(PutUser.putUser)
+        .pause(2 seconds)
+
+        .exec(DeleteUser.deleteUser)
+        .pause(2 seconds)
 }
 ```
 
-### **GetUsersScenario:**
+### **GetDeleteScenario:**
 
 ```Scala
 package scenarios
 
 import scala.concurrent.duration._
 import io.gatling.core.Predef.scenario
-import requests.{GetUser, GetUsers}
+import requests.{GetUsers, GetUser, DeleteUser}
 
-object GetUsersScenario {
-    val getUsersScenario = scenario("Get users scenario")
-        .exec(GetUser.getUser).pause(2 seconds)
-        .exec(GetUsers.getUsers).pause(2 seconds)
-}
-```
+object GetDeleteScenario {
+    val getDeleteScenario = scenario("GetDelete scenario")
+        .exec(GetUsers.getUsers)
+        .pause(2 seconds)
 
-### **UpdateUserScenario:**
+        .exec(GetUser.getUser)
+        .pause(2 seconds)
 
-```Scala
-package scenarios
-
-import scala.concurrent.duration._
-import io.gatling.core.Predef.scenario
-import requests.UpdateUser
-
-object UpdateUserScenario {
-    val updateUserScenario = scenario("Update user scenario")
-        .exec(UpdateUser.updateUser).pause(2 seconds)
+        .exec(DeleteUser.deleteUser)
+        .pause(2 seconds)
 }
 ```
 
@@ -170,41 +186,35 @@ package simulations
 
 import scala.concurrent.duration._
 import io.gatling.core.Predef._
-import scenarios._
-import config.Config._
+import io.gatling.http.Predef._
+import config.ConfigReqres._
+import scenarios.{PostDeleteScenario, GetDeleteScenario}
 
 class ReqresSimulation extends Simulation {
-    val createUserExec = CreateUserScenario.createUserScenario
-        .inject(
-            atOnceUsers(users),
-            nothingFor(5 seconds),
-            constantUsersPerSec(users) during(constantUserDuration)
-        )
-
-    val getUserExec = GetUsersScenario.getUsersScenario
-        .inject(
-            heavisideUsers(users*heavisideMult) during(heavisideDuration),
-            nothingFor(5 seconds),
-            rampUsersPerSec(users) to rampPerSecRate during(rampDuration)
-        )
-
-    val updateUserExec = UpdateUserScenario.updateUserScenario
+    val postDeleteExec = PostDeleteScenario.postDeleteScenario
         .inject(
             atOnceUsers(users),
             nothingFor(3 seconds),
-            constantUsersPerSec(users) during(constantUserDuration)
+            heavisideUsers(users) during(10 seconds),
+        )
+
+    val getDeleteExec = GetDeleteScenario.getDeleteScenario
+        .inject(
+            constantUsersPerSec(users) during(5 seconds),
+            nothingFor(5 seconds),
+            rampUsers(users) during(5 seconds)
         )
 
     setUp(
-        createUserExec,
-        getUserExec,
-        updateUserExec    
-    )            
+        postDeleteExec,
+        getDeleteExec
+    )
     .assertions(
-        details("Create new user").responseTime.max.lte(620),
-        details("Get users").responseTime.max.lte(200),
-        details("Get user").responseTime.max.lte(170),
-        details("Update user").responseTime.max.lte(800),
+        details("Get users").responseTime.max.lte(250),
+        details("Get user").responseTime.max.lte(500),
+        details("Post user").responseTime.max.lte(600),
+        details("Put user").responseTime.max.lte(500),
+        details("Delete user").responseTime.max.lte(600),
         global.failedRequests.percent.lte(5)
     )
 }
