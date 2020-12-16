@@ -15,6 +15,8 @@ Será criado um objedo **Config** que conterá a nossa url base, parâmetros e v
 ```Scala
 package config
 
+import java.io.{File, PrintWriter, IOException, FileNotFoundException}
+
 object ConfigReqres {
     private def getProperty(name: String, defaultValue: String): String = {
         Option(System.getenv(name))
@@ -22,8 +24,25 @@ object ConfigReqres {
             .getOrElse(defaultValue)
     }
 
+    def writeReponse(dataBytes: String, path: String) {
+        try {
+            val file = new File(path)
+
+            if(!file.exists())
+                file.createNewFile()
+
+            val pw = new PrintWriter(file)
+            pw.write(dataBytes)
+
+            pw.close()
+        } catch {
+            case e: FileNotFoundException => println("Couldn't find that file.")
+            case e: IOException => println("Had an IOException trying to read that file")
+        }
+    }
+
     val header = Map(
-        "content-type" -> "application/json"
+        "Content-Type" -> "application/json"
     )
 
     val baseUrl = "https://reqres.in"
@@ -34,7 +53,7 @@ object ConfigReqres {
 
 ## **Requests**
 
-Aqui conterão os requests separados em seus respectivos objetos, no nosso caso foram definidos 4 requests:
+Aqui conterão os requests separados em seus respectivos objetos, no nosso caso foram definidos 5 requests:
 
 ### **GetUser:**
 
@@ -50,6 +69,7 @@ object GetUser {
         .get(baseUrl + "/api/users/${userId}")
         .headers(header)
         .check(status.is(200))
+        .check(bodyString.saveAs("getResponse"))
     )
 }
 ```
@@ -69,6 +89,7 @@ object GetUsers {
         .queryParam("page", 2)
         .check(status.is(200))
         .check(jsonPath("$.data[1].id").saveAs("userId"))
+        .check(bodyString.saveAs("getsResponse"))
     )
 }
 ```
@@ -88,6 +109,7 @@ object PostUser {
         .body(StringBody("""{ "name": "James", "job": "spy" }""")).asJson
         .check(status.is(201))
         .check(jsonPath("$.id").saveAs("userId"))
+        .check(bodyString.saveAs("postResponse"))
     )
 }
 ```
@@ -108,6 +130,7 @@ object PutUser {
         .headers(header)
         .check(status.is(200))
         .check(regex("updatedAt").find.exists)
+        .check(bodyString.saveAs("putResponse"))
     )
 }
 ```
@@ -177,9 +200,57 @@ object GetDeleteScenario {
 }
 ```
 
+### **UnitScenario:**
+
+```Scala
+package scenarios
+
+import scala.concurrent.duration._
+import io.gatling.core.Predef._
+import config.ConfigReqres.writeReponse
+import requests.{GetUsers, PostUser, GetUser, PutUser, DeleteUser}
+
+object UnitScenario {
+    val unitScenario = scenario("Post scenario")
+        .exec(PostUser.postUser)
+        .pause(2 seconds)
+
+        .exec { session =>
+            writeReponse(session("postResponse").as[String], "src/test/resources/UnitScenario/post_response.json")
+            session
+        }
+
+        .exec(PutUser.putUser)
+        .pause(2 seconds)
+
+        .exec { session =>
+            writeReponse(session("putResponse").as[String], "src/test/resources/UnitScenario/put_response.json")
+            session
+        }
+
+        .exec(GetUsers.getUsers)
+        .pause(2 seconds)
+
+        .exec { session =>
+            writeReponse(session("getsResponse").as[String], "src/test/resources/UnitScenario/gets_response.json")
+            session
+        }
+
+        .exec(GetUser.getUser)
+        .pause(2 seconds)
+
+        .exec { session =>
+            writeReponse(session("getResponse").as[String], "src/test/resources/UnitScenario/get_response.json")
+            session
+        }
+}
+```
+
 ## **Simulations**
 
-Aqui conterão as nossas simulações, no nosso caso apenas uma simulação foi definida:
+Aqui conterão as nossas simulações, no nosso caso 2 simulações foram definidas:
+
+### **ReqresSimulation:**
 
 ```Scala
 package simulations
@@ -219,6 +290,28 @@ class ReqresSimulation extends Simulation {
     )
 }
 ```
-### **Assertions**
+#### **Assertions**
 
-Os assertions de escopo `details(group)` foram utilizados para definir um tempo de resposta máximo em ms de cada tipo de request. O nome do grupo de requests é definido no `http(g: String)` que precede os `exec()` da sequência de requests.  
+Os assertions de escopo `details(group)` foram utilizados para definir um tempo de resposta máximo em ms de cada tipo de request. O nome do grupo de requests é definido no `http(g: String)` que precede os `exec()` da sequência de requests.
+
+### **UnitSimulation:**
+
+Simulação unitária para verificar a resposta dos requests.
+
+```Scala
+package simulations
+
+import io.gatling.core.Predef._
+import io.gatling.http.Predef._
+import config.ConfigReqres._
+import scenarios.UnitScenario
+
+class UnitSimulation extends Simulation {
+    setUp(
+        UnitScenario.unitScenario
+            .inject(
+                atOnceUsers(1)
+            )
+    )
+}
+```

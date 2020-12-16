@@ -1,4 +1,0 @@
-RUN	simulations.PostSimulation	postsimulation	1608114578692	 	3.4.1
-USER	Post scenario	START	1608114579913
-REQUEST		Post user	1608114579934	1608114580573	OK	 
-USER	Post scenario	END	1608114582629
