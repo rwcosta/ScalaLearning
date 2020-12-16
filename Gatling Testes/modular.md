@@ -6,7 +6,7 @@ Para uma melhor organização modularizamos o teste utilizado em [simulation](ht
   - [**Requests**](#requests)
   - [**Scenarios**](#scenarios)
   - [**Simulations**](#simulations)
-  - [**Código-fonte**](https://github.com/rwcosta/ScalaLearning/tree/main/Gatling%20Testes/Gatling%20Maven/gatling-framework/src/test/scala/simulations/reqres)
+  - [**Código-fonte**](https://github.com/rwcosta/ScalaLearning/tree/main/Gatling%20Testes/Gatling%20Maven/gatling-framework/src/test/scala/reqres)
 
 ## **Config**
 
