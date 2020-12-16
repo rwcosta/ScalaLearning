@@ -24,7 +24,7 @@ RUN apk update \
 
 EXPOSE 8080
 
-CMD ["echo", "Gatling-Maven criado."]
+CMD ["/bin/bash"]
 ```
 
 Utilizamos como base a imagem do maven `maven:3-alpine` que já contém o **openjdk** e utiliza a distro linux **Alpine** que é mais leve do que outras distribuições pesando 5mb em média. Também foi instalado o `python3` para auxiliar na visualização do arquivo `index.hmtl` utilizando a porta 8080 do container que foi indicado pelo `EXPOSE`.
@@ -51,7 +51,7 @@ rwcosta/mvngtl      v1                  00ae4e5eeb38        2 hours ago         
 Para rodar um container na imagem criada utilizamos:
 
 ```console
-$ docker container run -d -p 8080:8080 --name MyContainer -v gtl-volm:/user/src/myimage -it rwcosta/mvngtl:v1 /bin/bash
+$ docker container run -d -p 8080:8080 --name MyContainer -v gtl-volm:/user/src/myimage -it rwcosta/mvngtl:v1
 ```
 
 ### **Parâmetros**
@@ -87,7 +87,7 @@ $ docker container exec -it MyContainer /bin/bash
 No bash temos acesso aos arquivos do container, para executar o teste basta ir para o diretório criado pelo `mvn archetype` e executar normalmente o `mvn gatling:test`:
 
 ```console
-$ cd Gatling\ Maven/gatling-framework/
+$ cd gatling-framework
 $ mvn gatling:test -Dgatling.simulationClass=simulations.ReqresSimulation
 ```
 

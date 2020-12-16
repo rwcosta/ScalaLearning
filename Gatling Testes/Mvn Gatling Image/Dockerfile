@@ -7,4 +7,4 @@ RUN apk update \
 
 EXPOSE 8080
 
-CMD ["echo", "Gatling-Maven criado."]
+CMD ["/bin/bash"]
